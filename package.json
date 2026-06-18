@@ -1,0 +1,129 @@
+{
+  "name": "codewalk",
+  "displayName": "Code Walk",
+  "description": "Browse code walks as notebook-style cells — step through traced execution paths with code highlights, imagined variable state, and call stacks. Standalone, no database required.",
+  "version": "0.1.0",
+  "publisher": "codewalk",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codegraph/code-walk"
+  },
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Visualization"
+  ],
+  "keywords": [
+    "code walk",
+    "walkthrough",
+    "code tour",
+    "onboarding",
+    "explain code"
+  ],
+  "activationEvents": [
+    "workspaceContains:.vscode/code-graph/codewalks",
+    "workspaceContains:**/*.codewalk.json"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codewalk",
+          "title": "Code Walk",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "codewalk": [
+        {
+          "id": "codewalk.cells",
+          "name": "Code Walk",
+          "type": "webview"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "codewalk.open",
+        "title": "Code Walk: Open Code Walk",
+        "icon": "$(notebook)"
+      },
+      {
+        "command": "codewalk.refresh",
+        "title": "Code Walk: Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "codewalk.nextCell",
+        "title": "Code Walk: Next Cell",
+        "icon": "$(arrow-down)"
+      },
+      {
+        "command": "codewalk.prevCell",
+        "title": "Code Walk: Previous Cell",
+        "icon": "$(arrow-up)"
+      },
+      {
+        "command": "codewalk.showOutput",
+        "title": "Code Walk: Show Output Log"
+      },
+      {
+        "command": "codewalk.installSkills",
+        "title": "Code Walk: Install AI Skills (Claude & Copilot)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "codewalk.open",
+          "when": "view == codewalk.cells",
+          "group": "navigation@1"
+        },
+        {
+          "command": "codewalk.prevCell",
+          "when": "view == codewalk.cells",
+          "group": "navigation@2"
+        },
+        {
+          "command": "codewalk.nextCell",
+          "when": "view == codewalk.cells",
+          "group": "navigation@3"
+        },
+        {
+          "command": "codewalk.refresh",
+          "when": "view == codewalk.cells",
+          "group": "navigation@4"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Code Walk",
+      "properties": {
+        "codewalk.autoOpenCell": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically open and highlight the source file when navigating cells."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile && npm run bundle",
+    "compile": "tsc -p tsconfig.json --noEmit",
+    "bundle": "node esbuild.mjs",
+    "build": "npm run compile && npm run bundle",
+    "watch": "node esbuild.mjs --watch",
+    "package": "npm run build && npx @vscode/vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.28.0",
+    "typescript": "^5.3.3"
+  }
+}
