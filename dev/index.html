@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Code Walk — UI dev preview</title>
+    <link rel="stylesheet" href="./main.css" />
+    <style>
+      /* ---- Dev page chrome (not part of the extension) ---- */
+      html,
+      body {
+        height: 100%;
+      }
+      body.dev-body {
+        margin: 0;
+        background: #30363d;
+        display: flex;
+        flex-direction: column;
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+      .dev-toolbar {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 14px;
+        background: #21262d;
+        color: #c9d1d9;
+        font-size: 12px;
+        border-bottom: 1px solid #0d1117;
+      }
+      .dev-toolbar strong {
+        font-size: 13px;
+      }
+      .dev-toolbar button {
+        font: inherit;
+        cursor: pointer;
+        background: #30363d;
+        color: #c9d1d9;
+        border: 1px solid #484f58;
+        border-radius: 5px;
+        padding: 4px 10px;
+      }
+      .dev-toolbar button:hover {
+        background: #3c444d;
+      }
+      .dev-toolbar .spacer {
+        margin-left: auto;
+        opacity: 0.6;
+      }
+      .dev-stage {
+        flex: 1 1 auto;
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+        padding: 20px;
+        overflow: auto;
+      }
+      .dev-sidebar {
+        width: var(--dev-width, 360px);
+        max-width: 100%;
+        border: 1px solid #0d1117;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        display: flex;
+      }
+      /* The app mounts here; give it the simulated sidebar surface. */
+      #root {
+        flex: 1;
+        height: 100%;
+        overflow-y: auto;
+        background: var(--vscode-sideBar-background);
+      }
+
+      /* ---- Simulated VS Code theme tokens ---- */
+      body.theme-dark {
+        --vscode-font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+        --vscode-editor-font-family: "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+        --vscode-foreground: #cccccc;
+        --vscode-sideBar-background: #1f1f1f;
+        --vscode-editor-background: #1e1e1e;
+        --vscode-descriptionForeground: #9d9d9d;
+        --vscode-panel-border: #2b2b2b;
+        --vscode-widget-border: #2b2b2b;
+        --vscode-textLink-foreground: #4daafc;
+        --vscode-editorWidget-background: #252526;
+        --vscode-textCodeBlock-background: #2a2a2a;
+        --vscode-textBlockQuote-background: #222222;
+        --vscode-list-hoverBackground: #2a2d2e;
+        --vscode-list-activeSelectionBackground: #04395e;
+        --vscode-button-background: #0e639c;
+        --vscode-button-foreground: #ffffff;
+        --vscode-button-hoverBackground: #1177bb;
+        --vscode-button-secondaryBackground: #313131;
+        --vscode-button-secondaryForeground: #cccccc;
+        --vscode-badge-background: #4d4d4d;
+        --vscode-badge-foreground: #ffffff;
+        --vscode-focusBorder: #007fd4;
+        --vscode-charts-blue: #4daafc;
+        --vscode-charts-green: #73c991;
+        --vscode-charts-yellow: #e2c08d;
+        --vscode-charts-red: #f14c4c;
+        --vscode-charts-purple: #c586c0;
+      }
+      body.theme-light {
+        --vscode-font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+        --vscode-editor-font-family: "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+        --vscode-foreground: #3b3b3b;
+        --vscode-sideBar-background: #f8f8f8;
+        --vscode-editor-background: #ffffff;
+        --vscode-descriptionForeground: #767676;
+        --vscode-panel-border: #e5e5e5;
+        --vscode-widget-border: #e5e5e5;
+        --vscode-textLink-foreground: #006ab1;
+        --vscode-editorWidget-background: #f3f3f3;
+        --vscode-textCodeBlock-background: #ededed;
+        --vscode-textBlockQuote-background: #f0f0f0;
+        --vscode-list-hoverBackground: #e8e8e8;
+        --vscode-list-activeSelectionBackground: #cee0f5;
+        --vscode-button-background: #005fb8;
+        --vscode-button-foreground: #ffffff;
+        --vscode-button-hoverBackground: #0258a8;
+        --vscode-button-secondaryBackground: #e5e5e5;
+        --vscode-button-secondaryForeground: #3b3b3b;
+        --vscode-badge-background: #c4c4c4;
+        --vscode-badge-foreground: #3b3b3b;
+        --vscode-focusBorder: #005fb8;
+        --vscode-charts-blue: #1a85ff;
+        --vscode-charts-green: #388a34;
+        --vscode-charts-yellow: #bf8803;
+        --vscode-charts-red: #e51400;
+        --vscode-charts-purple: #af00db;
+      }
+      body.theme-light .dev-stage {
+        background: #e9edf1;
+      }
+    </style>
+  </head>
+  <body class="dev-body theme-dark">
+    <div class="dev-toolbar">
+      <strong>Code Walk · UI preview</strong>
+      <button id="themeBtn" type="button">Theme: Dark</button>
+      <button id="widthBtn" type="button">Width: 360px</button>
+      <span class="spacer">mock data · hot reload</span>
+    </div>
+    <div class="dev-stage">
+      <div class="dev-sidebar">
+        <div id="root"></div>
+      </div>
+    </div>
+
+    <script>
+      // Dev-only chrome controls (kept out of the bundle on purpose).
+      (function () {
+        var widths = [360, 300, 460];
+        var wi = 0;
+        var themeBtn = document.getElementById('themeBtn');
+        var widthBtn = document.getElementById('widthBtn');
+        themeBtn.addEventListener('click', function () {
+          var dark = document.body.classList.toggle('theme-dark');
+          document.body.classList.toggle('theme-light', !dark);
+          themeBtn.textContent = 'Theme: ' + (dark ? 'Dark' : 'Light');
+        });
+        widthBtn.addEventListener('click', function () {
+          wi = (wi + 1) % widths.length;
+          document.documentElement.style.setProperty('--dev-width', widths[wi] + 'px');
+          widthBtn.textContent = 'Width: ' + widths[wi] + 'px';
+        });
+      })();
+    </script>
+    <script src="./main.js"></script>
+  </body>
+</html>

@@ -4,13 +4,16 @@ Browse **code walks** — notebook-style, step-by-step walkthroughs of execution
 paths — directly in the VS Code sidebar.
 
 A code walk is an ordered sequence of **cells**, where each cell focuses on a
-meaningful chunk of execution and shows:
+meaningful chunk of execution. The sidebar shows a clear, readable
+**explanation** of each step (never raw code) while the matching source is
+highlighted in the editor:
 
-- The relevant **code slice** with highlighted lines
-- An AI- or human-authored **narrative** explaining what happens
+- A plain-language **explanation** of what happens at that step (with optional
+  sub-steps for a guided, one-concept-at-a-time walkthrough)
 - The **variable state** at that point (created / modified / read)
-- The **call stack**
+- The **call stack** (click a frame to jump to it)
 - **Branch options** when execution can fork down multiple paths
+- A **file reference** to open the corresponding code in the editor
 
 This is a lightweight, **standalone** extension: it reads walks straight from
 `.codewalk.json` files on disk. No database, AI provider, or server is required
@@ -19,10 +22,12 @@ skills, or by hand).
 
 ## Features
 
-- **Code Walk panel** — a polished sidebar view with a progress bar, sticky
-  navigation, code rendering, variable diffs, and a clickable call stack.
+- **Code Walk panel** — a clean, React-based sidebar (shadcn-inspired UI) with a
+  progress bar, sticky navigation, an explanation-first layout, variable diffs,
+  and a clickable call stack. The panel shows clear text, not code.
 - **Editor sync** — navigating cells opens the source file and highlights the
-  cell's lines (and the focused sub-step line).
+  cell's lines (and the focused sub-step line), keeping code in the editor where
+  it belongs.
 - **Branch-aware navigation** — choose a path at branch points; "Prev" retraces
   your exact route.
 - **Keyboard navigation** — `↑`/`↓` or `j`/`k` to move between cells.

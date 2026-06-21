@@ -2,3 +2,10 @@ node_modules/
 dist/
 *.map
 *.vsix
+
+# UI dev-server build artifacts (dev/index.html is committed; bundles are not)
+dev/main.js
+dev/main.css
+
+# Local Code Walk data / logs used during development
+.vscode/code-graph/

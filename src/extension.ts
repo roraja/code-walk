@@ -37,7 +37,7 @@ export function activate(context: vscode.ExtensionContext): void {
   });
 
   const reader = workspaceRoot ? new CodeWalkFileReader(workspaceRoot) : undefined;
-  const cellsView = new CodeWalkCellsViewProvider();
+  const cellsView = new CodeWalkCellsViewProvider(context.extensionUri);
 
   // Open-walk flow shared by the empty-state button and the open command.
   const openWalkFlow = async (): Promise<void> => {
